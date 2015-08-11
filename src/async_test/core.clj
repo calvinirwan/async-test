@@ -5,34 +5,15 @@
              :refer [>! <! >!! <!! take! put!
                      go go-loop chan buffer close!
                      thread alts! alts!! timeout]]
-            [clojure.set :as s]))
+            [clojure.set :as s]
+            [clj-mailgun.core :as m]
+            [cheshire.core :as c]
+            [async-test.mail :refer [valid-mail? send-mail]]))
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
   (println "Hello, World!"))
-
-;; (def echo-chan (chan))
-;; (go (println (<! echo-chan)))
-;; (>!! echo-chan "ketchup")
-
-;; (def c (chan))
-;; (take! c (fn [v] (println v)))
-
-;; (defn takep [c]
-;;   (let [p (promise)]
-;;     (take! c (fn [v] (deliver p v)))
-;;     @p))
-
-;; (def f (future (Thread/sleep 10000) (println "done") 100))
-
-;; (def mail-chan (chan))
-
-;; (defn mail-machine
-;;   []
-;;   (let [mail-chan (chan)]
-;;     (go (while true (mail-validation (<! c))))
-;;     (dotimes )))
 
 (def a-chan (chan))
 (def b-chan (chan))
@@ -44,20 +25,12 @@
     (go (println (<! b)))
     (recur a b)))
 
-
-;; (def tea-chan (chan 10))
-;; (>!! tea-chan :tea-1)
-;; (<!! tea-chan)
-;; (a/close! tea-chan)
-;; (a/go-loop []
-;;   (println "Thanks for the " (<! tea-chan))
-;;   (recur))
-
+(def config (read-string (slurp "config.edn")))
 (def mail-chan (chan 10))
 (def valid-mail-chan (chan 5))
 (def invalid-mail-chan (chan 5))
 
-(defn valid-mail?
+#_(defn valid-mail?
   [mail]
   (< 5 (count mail)))
 
@@ -76,10 +49,19 @@
     (let [mail (<! mail-chan)]
       (if (valid-mail? mail)
         (>! valid-mail-chan (str mail "@gmail.com"))
-        (>! invalid-mail-chan (str mail "@xhamsters.com"))))
-    (println "mail is valid " (<! valid-mail-chan))
-    (println "mail is invalid " (<! invalid-mail-chan))
-    (recur)))
+        (>! invalid-mail-chan (str mail "@xhamsters.com")))
+        (recur))))
+
+(defn infinite-mail-send
+  []
+  (go-loop []
+    (let [vmc valid-mail-chan]
+      (println (<! vmc))
+      (recur))))
 
 (defn tiger []
   (infinite-mail-check))
+
+(defn eagle []
+  (infinite-mail-send))
+
