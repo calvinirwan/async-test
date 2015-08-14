@@ -8,7 +8,9 @@
             [clojure.set :as s]
             [clj-mailgun.core :as m]
             [cheshire.core :as c]
-            [async-test.mail :refer [valid-mail? send-mail]]))
+            [async-test.mail :refer [valid-mail? send-mail
+                                     mailgun mailgun2
+                                     mail1 mail2 mail3]]))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -25,7 +27,6 @@
     (go (println (<! b)))
     (recur a b)))
 
-(def config (read-string (slurp "config.edn")))
 (def mail-chan (chan 10))
 (def valid-mail-chan (chan 5))
 (def invalid-mail-chan (chan 5))
@@ -38,8 +39,8 @@
   [mail-chan]
   (go (let [mail (<! mail-chan)]
         (if (valid-mail? mail)
-          (>! valid-mail-chan (str mail "@gmail.com"))
-          (>! invalid-mail-chan (str mail "@xhamsters.com"))))))
+          (>! valid-mail-chan mail)
+          (>! invalid-mail-chan mail)))))
 
 (defn infinite-mail-check
   []
@@ -47,10 +48,10 @@
     #_(>! vmc (str (<! mail-chan) "@gmial.cu"))
     #_(mail-allocate mail-chan)
     (let [mail (<! mail-chan)]
-      (if (valid-mail? mail)
-        (>! valid-mail-chan (str mail "@gmail.com"))
-        (>! invalid-mail-chan (str mail "@xhamsters.com")))
-        (recur))))
+      (if (valid-mail? mailgun mail)
+        (>! valid-mail-chan mail)
+        (>! invalid-mail-chan mail))
+      (recur))))
 
 (defn infinite-mail-send
   []
