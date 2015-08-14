@@ -8,9 +8,10 @@
             [clojure.set :as s]
             [clj-mailgun.core :as m]
             [cheshire.core :as c]
-            [async-test.mail :refer [valid-mail? send-mail
-                                     mailgun mailgun2
-                                     mail1 mail2 mail3]]))
+            [async-test.mail :refer [valid-mail?]]
+            [async-test.mailtrap :refer [send-mail]]
+            [async-test.config :refer [mailgun mailgun2
+                                       mail1 mail2 mail3]]))
 
 (defn -main
   "I don't do a whole lot ... yet."
