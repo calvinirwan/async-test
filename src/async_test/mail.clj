@@ -1,26 +1,11 @@
 (ns async-test.mail
   (:gen-class)
-  (:require [clojure.core.async
-             :as a
-             :refer [>! <! >!! <!! take! put!
-                     go go-loop chan buffer close!
-                     thread alts! alts!! timeout]]
-            [clojure.set :as s]
-            [clj-mailgun.core :as m]
+  (:require [clj-mailgun.core :as m]
             [clojure.pprint :refer [pprint]]
             [cheshire.core :as c]
-            [clj-http.client :as client]))
-
-(def config (read-string (slurp "config.edn")))
-(def mail (read-string (slurp "mail.edn")))
-
-(def mailgun (config :mailgun))
-(def mailgun2 (config :mailgun2))
-(def mailtrap (config :mailtrap))
-
-(def mail1 (mail :mail1))
-(def mail2 (mail :mail2))
-(def mail3 (mail :mail3))
+            [clj-http.client :as client]
+            [async-test.config :refer [mailgun mailgun2
+                                       mail1 mail2 mail3]]))
 
 (defn validation-mail-gun
   [mailgun-config email-id]
