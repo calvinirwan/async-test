@@ -56,7 +56,3 @@
     (client/get (mailtrap-url-maker api url)
                 {:headers {:Api-token api_token}})))
 
-#_(defn mailtrap-send
-  []
-  (client/post ))
-

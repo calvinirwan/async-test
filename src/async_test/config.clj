@@ -1,4 +1,5 @@
-(ns async-test.config)
+(ns async-test.config
+  (:gen-class))
 
 (def config (read-string (slurp "config.edn")))
 (def mail (read-string (slurp "mail.edn")))

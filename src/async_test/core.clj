@@ -10,7 +10,7 @@
             [cheshire.core :as c]
             [async-test.mail :refer [valid-mail?]]
             [async-test.mailtrap :refer [send-mail]]
-            [async-test.config :refer [mailgun mailgun2
+            [async-test.config :refer [mailgun mailgun2 mail
                                        mail1 mail2 mail3]]))
 
 (defn -main
@@ -43,6 +43,11 @@
           (>! valid-mail-chan mail)
           (>! invalid-mail-chan mail)))))
 
+(defn send-valid-mail
+  [mail]
+  (let [{:keys [to subject text]} mail]
+    (send-mail to subject text)))
+
 (defn infinite-mail-check
   []
   (go-loop []
@@ -58,7 +63,7 @@
   []
   (go-loop []
     (let [vmc valid-mail-chan]
-      (println (<! vmc))
+      (send-valid-mail (<! vmc))
       (recur))))
 
 (defn tiger []
